@@ -3,6 +3,8 @@ import 'package:flutter_bilibili_lcq/http/core/hi_error.dart';
 import 'package:flutter_bilibili_lcq/http/core/hi_net.dart';
 import 'package:flutter_bilibili_lcq/http/request/test_request.dart';
 
+import 'db/hi_cache.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -53,23 +55,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() async {
-    TestRequest request = TestRequest();
-    request.add('aa', 'ddd').add('bb', 'ddd');
-    // var result = await HiNet.getInstance()!.fire(request);
-    // print(result);
+  void _incrementCounter() {
+    test2();
+  }
 
-    try {
-      var result = await HiNet.getInstance()!.fire(request);
-    } on NeedAuth catch (e) {
-      print(e);
-    } on NeedLogin catch (e) {
-      print(e);
-    } on HiNetError catch (e) {
-      print(e);
-    } catch (e) {
-      print(e);
-    }
+  @override
+  void initState() {
+    HiCache.preInit();
+    super.initState();
   }
 
   @override
@@ -122,5 +115,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void test2() {
+    HiCache.getInstance().setString("aa", "1234");
+    var value = HiCache.getInstance().get("aa");
+    print('value:$value');
   }
 }

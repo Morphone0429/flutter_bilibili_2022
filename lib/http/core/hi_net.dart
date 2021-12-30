@@ -1,8 +1,9 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:flutter_bilibili_lcq/http/core/dio_adapter.dart';
 import 'package:flutter_bilibili_lcq/http/core/hi_error.dart';
 import 'package:flutter_bilibili_lcq/http/core/hi_net_adapter.dart';
-import 'package:flutter_bilibili_lcq/http/core/mock_adapter.dart';
+// import 'package:flutter_bilibili_lcq/http/core/mock_adapter.dart';
 
 import '../request/base_request.dart';
 
@@ -12,7 +13,7 @@ import '../request/base_request.dart';
 ///4.统一异常和返回处理
 class HiNet {
   HiNet._();
-  static HiNet? _instance; //单例写法  懒汉模式  使用时才创建
+  static HiNet? _instance; //单例写法  懒汉模式  使用时才创建  固定模板写法
   static HiNet? getInstance() {
     if (_instance == null) {
       _instance = HiNet._();
@@ -56,7 +57,9 @@ class HiNet {
   }
 
   Future<HiNetResponse<T>> send<T>(BaseRequest request) async {
-    HiNetAdapter adapter = MockAdapter();
+    // HiNetAdapter adapter = MockAdapter();
+    // 切换 dio adapter
+    HiNetAdapter adapter = DioAdapter();
     return adapter.send(request);
   }
 
