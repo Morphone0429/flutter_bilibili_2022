@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bilibili_lcq/http/core/hi_error.dart';
-import 'package:flutter_bilibili_lcq/http/core/hi_net.dart';
-import 'package:flutter_bilibili_lcq/http/request/test_request.dart';
+import 'package:flutter_bilibili_lcq/http/dao/login_dao.dart';
+import 'package:flutter_bilibili_lcq/page/login_page.dart';
+import 'package:flutter_bilibili_lcq/page/registration_page.dart';
+import 'package:flutter_bilibili_lcq/util/color.dart';
 
 import 'db/hi_cache.dart';
 
@@ -11,25 +12,14 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: white,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: LoginPage(),
     );
   }
 }
@@ -117,9 +107,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void test2() {
-    HiCache.getInstance().setString("aa", "1234");
-    var value = HiCache.getInstance().get("aa");
-    print('value:$value');
+  void test2() async {
+    try {
+      var res2 = await LoginDao.login('admin', 'admin');
+      print(res2);
+    } catch (e) {}
   }
 }

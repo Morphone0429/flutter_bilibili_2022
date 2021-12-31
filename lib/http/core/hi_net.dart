@@ -42,7 +42,6 @@ class HiNet {
     }
 
     var result = response?.data;
-    printLog(result);
     var status = response?.statusCode;
     switch (status) {
       case 200:
