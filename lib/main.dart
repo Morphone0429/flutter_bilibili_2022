@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bilibili_lcq/http/dao/login_dao.dart';
+import 'package:flutter_bilibili_lcq/page/demo/home_screen.dart';
 import 'package:flutter_bilibili_lcq/page/login_page.dart';
 import 'package:flutter_bilibili_lcq/page/registration_page.dart';
 import 'package:flutter_bilibili_lcq/util/color.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: white,
       ),
-      home: LoginPage(),
+      home: HomeScreen(),
     );
   }
 }
