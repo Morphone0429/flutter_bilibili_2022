@@ -98,12 +98,7 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
     if (routeStatus == RouteStatus.home) {
       // 跳转首页时将栈中其他页面进行出栈，因为首页不可回退
       pages.clear();
-      page = pageWrap(HomePage(
-        onJumpToDetail: (videoModel) {
-          this.videoModel = videoModel;
-          notifyListeners(); //通知
-        },
-      )); // 创建首页
+      page = pageWrap(HomePage()); // 创建首页
     } else if (routeStatus == RouteStatus.detail) {
       page = pageWrap(VideoDetailPage(videoModel!));
     } else if (routeStatus == RouteStatus.registration) {

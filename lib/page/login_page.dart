@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bilibili_lcq/http/core/hi_error.dart';
 import 'package:flutter_bilibili_lcq/http/dao/login_dao.dart';
+import 'package:flutter_bilibili_lcq/navigator/hi_navigator.dart';
 import 'package:flutter_bilibili_lcq/util/string_util.dart';
 import 'package:flutter_bilibili_lcq/util/toast.dart';
 import 'package:flutter_bilibili_lcq/widget/appbar.dart';
@@ -9,11 +10,12 @@ import 'package:flutter_bilibili_lcq/widget/login_effect.dart';
 import 'package:flutter_bilibili_lcq/widget/login_input.dart';
 
 class LoginPage extends StatefulWidget {
-  final VoidCallback? onJumpRegistion;
-  final VoidCallback? onSuccess; //登录成功的回调
+  // final VoidCallback? onJumpRegistion;
+  // final VoidCallback? onSuccess; //登录成功的回调
 
-  const LoginPage({Key? key, this.onJumpRegistion, this.onSuccess})
-      : super(key: key);
+  const LoginPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -28,7 +30,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar('密码登录', '注册', widget.onJumpRegistion),
+      appBar: appBar('密码登录', '注册', () {
+        HiNavigator.getInstance()?.onJumpTo(RouteStatus.registration);
+      }),
       body: Container(
         child: ListView(
           children: [
@@ -86,9 +90,10 @@ class _LoginPageState extends State<LoginPage> {
       print(result);
       if (result['code'] == 0) {
         showToast('登录成功');
-        if (widget.onSuccess != null) {
-          widget.onSuccess!();
-        }
+        HiNavigator.getInstance()?.onJumpTo(RouteStatus.home);
+        // if (widget.onSuccess != null) {
+        //   widget.onSuccess!();
+        // }
       } else {
         showWarnToast(result['msg']);
       }

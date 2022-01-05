@@ -3,7 +3,10 @@ import 'package:flutter_bilibili_lcq/model/video_model.dart';
 
 class VideoDetailPage extends StatefulWidget {
   final VideoModel videoModel;
-  const VideoDetailPage(this.videoModel, {Key? key}) : super(key: key);
+  const VideoDetailPage(
+    this.videoModel, {
+    Key? key,
+  }) : super(key: key);
 
   @override
   _VideoDetailPageState createState() => _VideoDetailPageState();

@@ -47,8 +47,12 @@ class RouteStatusInfo {
 
 // 监听路由页面跳转
 // 感知当前页面是否压后台
-class HiNavigator {
+// HiNavigator本身没有跳转能力 RouterDelegate提供
+class HiNavigator extends _RouteJumpListener {
   static HiNavigator? _instance;
+
+  RouteJumpListener? _routeJump;
+
   HiNavigator._();
   static HiNavigator? getInstance() {
     if (_instance == null) {
@@ -56,9 +60,29 @@ class HiNavigator {
     }
     return _instance;
   }
+
+  // 注册路由跳转逻辑
+  void registerRouteJump(RouteJumpListener routeJumpListener) {
+    _routeJump = routeJumpListener;
+  }
+
+  @override
+  void onJumpTo(RouteStatus routeStatus, {Map? args}) {
+    // TODO: implement onJumpTo
+    _routeJump?.onJumpTo!(routeStatus, args: args);
+  }
 }
 
 // 抽象类 供HiNavigator 实现
 abstract class _RouteJumpListener {
   void onJumpTo(RouteStatus routeStatus, {Map? args});
+}
+
+// 定义跳转类型
+typedef OnJumpTo = void Function(RouteStatus routeStatus, {Map? args});
+
+// router 监听---> 定义路由跳转逻辑要实现的功能
+class RouteJumpListener {
+  final OnJumpTo? onJumpTo;
+  RouteJumpListener({this.onJumpTo});
 }
