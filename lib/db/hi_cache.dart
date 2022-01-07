@@ -19,7 +19,7 @@ class HiCache {
   static Future<HiCache> preInit() async {
     if (_instance == null) {
       // 为空时 才初始化   https://github.com/flutter/flutter/issues/65334
-      SharedPreferences.setMockInitialValues({});
+      // SharedPreferences.setMockInitialValues({});
       var prefs = await SharedPreferences.getInstance();
       _instance = HiCache._pre(prefs);
     }

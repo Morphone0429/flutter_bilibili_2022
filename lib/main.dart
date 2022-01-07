@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bilibili_lcq/http/dao/login_dao.dart';
 import 'package:flutter_bilibili_lcq/navigator/hi_navigator.dart';
-import 'package:flutter_bilibili_lcq/page/home_page.dart';
 import 'package:flutter_bilibili_lcq/page/login_page.dart';
 import 'package:flutter_bilibili_lcq/page/registration_page.dart';
 import 'package:flutter_bilibili_lcq/page/video_detail_page.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_bilibili_lcq/util/toast.dart';
 
 import 'db/hi_cache.dart';
 import 'model/video_model.dart';
+import 'navigator/bottom_navigator.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,6 +42,12 @@ class _BiliAppState extends State<BiliApp> {
   final BiliRouteDelegate _routeDelegate = BiliRouteDelegate();
   // final BiliRouteInformationParser _routeInformationParser =
   //     BiliRouteInformationParser();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +115,7 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
     if (routeStatus == RouteStatus.home) {
       // 跳转首页时将栈中其他页面进行出栈，因为首页不可回退
       pages.clear();
-      page = pageWrap(HomePage()); // 创建首页
+      page = pageWrap(BottomNavigator()); // 创建首页
     } else if (routeStatus == RouteStatus.detail) {
       page = pageWrap(VideoDetailPage(videoModel!));
     } else if (routeStatus == RouteStatus.registration) {
@@ -119,7 +125,8 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
     }
     // 重新创建一个数组 否则pages因引用没有改变路由不会生效
     tempPages = [...tempPages, page];
-
+    // 路由变化  通知路由发生变化  tempPages此时是新的堆栈信息  page还未赋值 是旧的堆栈信息
+    HiNavigator.getInstance()?.notify(tempPages, pages);
     pages = tempPages;
 
     return WillPopScope(
@@ -143,7 +150,10 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
           if (!route.didPop(result)) {
             return false;
           }
+          // 关闭页面  通知路由变化
+          var tempPages = [...pages];
           pages.removeLast(); // 返回的上一页面移出  栈顶页面移出
+          HiNavigator.getInstance()?.notify(pages, tempPages);
           return true;
         },
       ),
@@ -152,6 +162,7 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
 
   // 路由拦截
   RouteStatus get routeStatus {
+    print('是否已登录-登录令牌：${LoginDao.getBoardingPass()}');
     if (_routeStatus != RouteStatus.registration && !hasLogin) {
       return _routeStatus = RouteStatus.login;
     } else if (videoModel != null) {
