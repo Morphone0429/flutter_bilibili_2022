@@ -78,8 +78,7 @@ class _BiliAppState extends State<BiliApp> {
 }
 
 // RouterDelegate代理
-class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin {
+class BiliRouteDelegate extends RouterDelegate<BiliRoutePath> with ChangeNotifier, PopNavigatorRouterDelegateMixin {
   // navigatorKey初始化  好处可以通过GlobalKey获取当前NavigatorState
   // 为Navigator设置一个key 必要的时候可以用过navigatorKey.currentState来获取NavigatorState对象
   final GlobalKey<NavigatorState> navigatorKey;
@@ -104,6 +103,7 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
   // BiliRoutePath? path;
   @override
   Widget build(BuildContext context) {
+    // print('LoginDao.getBoardingPass()${LoginDao.getBoardingPass()}');
     var index = getPageIndex(pages, routeStatus); // 打开的页面是否在路由堆栈，存在的话在什么位置
     List<MaterialPage> tempPages = pages;
     if (index != -1) {
@@ -130,8 +130,8 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
     pages = tempPages;
 
     return WillPopScope(
-      onWillPop: () async => !await navigatorKey.currentState!
-          .maybePop(), //返回上一页调用的方法  获取全局navigatorKey  修复安卓物理返回键无法返回上一页的问题
+      onWillPop: () async =>
+          !await navigatorKey.currentState!.maybePop(), //返回上一页调用的方法  获取全局navigatorKey  修复安卓物理返回键无法返回上一页的问题
       child: Navigator(
         key: navigatorKey,
         pages: pages,
@@ -162,7 +162,7 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
 
   // 路由拦截
   RouteStatus get routeStatus {
-    print('是否已登录-登录令牌：${LoginDao.getBoardingPass()}');
+    // print('是否已登录-登录令牌：${LoginDao.getBoardingPass()}');
     if (_routeStatus != RouteStatus.registration && !hasLogin) {
       return _routeStatus = RouteStatus.login;
     } else if (videoModel != null) {
@@ -182,10 +182,9 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
 // 将其解析为定义的数据类型
 class BiliRouteInformationParser extends RouteInformationParser<BiliRoutePath> {
   @override
-  Future<BiliRoutePath> parseRouteInformation(
-      RouteInformation routeInformation) async {
+  Future<BiliRoutePath> parseRouteInformation(RouteInformation routeInformation) async {
     final uri = Uri.parse(routeInformation.location!); // 字符串转uri
-    print('uri:$uri');
+    // print('uri:$uri');
     if (uri.pathSegments.isEmpty) {
       // 长度为0  认为是首页
       return BiliRoutePath.home();
