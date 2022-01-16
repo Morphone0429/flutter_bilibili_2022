@@ -53,25 +53,28 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
       onRefresh: _loadData,
       color: primary,
       child: MediaQuery.removePadding(
-          removeTop: true,
-          context: context,
-          child: GridView.builder(
-            controller: _scrollController,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 4,
-            ),
-            itemBuilder: (context, index) {
-              // return VideoCard(videoMo: videoList[index]);
-              if (widget.bannerList != null && index == 0) {
-                return Padding(padding: EdgeInsets.only(bottom: 8), child: _banner());
-              } else {
-                return VideoCard(videoMo: videoList[index]);
-              }
-            },
-            itemCount: videoList.length,
-          )),
+        removeTop: true,
+        context: context,
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: AlwaysScrollableScrollPhysics(),
+          slivers: [
+            if (widget.name == '推荐')
+              SliverList(
+                delegate: SliverChildBuilderDelegate((content, index) {
+                  return Padding(padding: EdgeInsets.only(bottom: 8), child: _banner());
+                }, childCount: 1),
+              ),
+
+            SliverGrid.count(
+                crossAxisCount: 2,
+                children: List.generate(videoList.length, (index) {
+                  return VideoCard(videoMo: videoList[index]);
+                }).toList()),
+            // SliverList
+          ],
+        ),
+      ),
     );
   }
 
@@ -82,40 +85,15 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
     );
   }
 
-  _gridView() {
-    // return StaggeredGridView.countBuilder(
-    //   controller: _scrollController,
-    //   physics: const AlwaysScrollableScrollPhysics(), //解决如果第一页数据过少 不足以撑满屏幕 下拉刷新失效的问题
-    //   padding: EdgeInsets.only(top: 10, left: 10, right: 10),
-    //   crossAxisCount: 2,
-    //   itemCount: videoList.length,
-    //   itemBuilder: (BuildContext context, int index) {
-    //     //有banner时第一个item位置显示banner
-    //     if (widget.bannerList != null && index == 0) {
-    //       return Padding(padding: EdgeInsets.only(bottom: 8), child: _banner());
-    //     } else {
-    //       return VideoCard(videoMo: videoList[index]);
-    //     }
-    //   },
-    //   staggeredTileBuilder: (int index) {
-    //     if (widget.bannerList != null && index == 0) {
-    //       return StaggeredTile.fit(2);
-    //     } else {
-    //       return StaggeredTile.fit(1);
-    //     }
-    //   },
-    // );
-  }
-
   Future<void> _loadData({loadMore = false}) async {
     _loading = true;
     if (!loadMore) {
       pageIndex = 1;
     }
     var currentIndex = pageIndex + (loadMore ? 1 : 0); // 加载更多 就 +1 其他保持不变
-    // print('loading:currentIndex:$currentIndex');
+    print('loading:currentIndex:$currentIndex');
     try {
-      HomeMo result = await HomeDao.get(widget.name!, pageIndex: currentIndex, pageSize: 30);
+      HomeMo result = await HomeDao.get(widget.name!, pageIndex: currentIndex, pageSize: 10);
       setState(() {
         if (loadMore) {
           if (result.videoList.isNotEmpty) {

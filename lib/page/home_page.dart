@@ -3,10 +3,10 @@ import 'package:flutter_bilibili_lcq/core/hi_state.dart';
 import 'package:flutter_bilibili_lcq/http/core/hi_error.dart';
 import 'package:flutter_bilibili_lcq/http/dao/home_dao.dart';
 import 'package:flutter_bilibili_lcq/model/home_mo.dart';
-import 'package:flutter_bilibili_lcq/model/video_model.dart';
 import 'package:flutter_bilibili_lcq/navigator/hi_navigator.dart';
 import 'package:flutter_bilibili_lcq/util/color.dart';
 import 'package:flutter_bilibili_lcq/util/toast.dart';
+import 'package:flutter_bilibili_lcq/widget/loading_container.dart';
 import 'package:flutter_bilibili_lcq/widget/navigation_bar.dart';
 import 'package:underline_indicator/underline_indicator.dart';
 
@@ -28,6 +28,7 @@ class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixi
 
   List<CategoryMo> categoryList = [];
   List<BannerMo> bannerList = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -59,30 +60,33 @@ class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixi
     super.build(context);
     return Scaffold(
       // appBar: AppBar(),
-      body: Column(
-        children: [
-          NavigationBar(
-            height: 50,
-            child: _appBar(),
-            color: Colors.white,
-            statusStyle: StatusStyle.DARK_CONTENT,
-          ),
-          Container(
-            color: Colors.white,
-            child: _tabBar(),
-          ),
-          Flexible(
-            child: TabBarView(
-              controller: _controller, // _controller通过  与_tabBar联动
-              children: categoryList.map((tab) {
-                return HomeTabPage(
-                  name: tab.name,
-                  bannerList: tab.name == '推荐' ? bannerList : null,
-                );
-              }).toList(),
+      body: LoadingContainer(
+        isLoading: _isLoading,
+        child: Column(
+          children: [
+            NavigationBar(
+              height: 50,
+              child: _appBar(),
+              color: Colors.white,
+              statusStyle: StatusStyle.DARK_CONTENT,
             ),
-          ),
-        ],
+            Container(
+              color: Colors.white,
+              child: _tabBar(),
+            ),
+            Flexible(
+              child: TabBarView(
+                controller: _controller, // _controller通过  与_tabBar联动
+                children: categoryList.map((tab) {
+                  return HomeTabPage(
+                    name: tab.name,
+                    bannerList: tab.name == '推荐' ? bannerList : null,
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -171,13 +175,20 @@ class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixi
       setState(() {
         categoryList = result.categoryList ?? [];
         bannerList = result.bannerList ?? [];
+        _isLoading = false;
       });
     } on NeedAuth catch (e) {
       print('$e');
       showWarnToast(e.message);
+      setState(() {
+        _isLoading = false;
+      });
     } on HiNetError catch (e) {
       print('$e');
       showWarnToast(e.message);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 }
