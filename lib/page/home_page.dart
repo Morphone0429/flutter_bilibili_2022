@@ -15,8 +15,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   var listener;
 
   late TabController _controller;
@@ -25,9 +24,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    _controller = TabController(
-        length: tabs.length,
-        vsync: this); // TickerProviderStateMixin实现了vsync的功能 复用即可
+    _controller = TabController(length: tabs.length, vsync: this); // TickerProviderStateMixin实现了vsync的功能 复用即可
     HiNavigator.getInstance()?.addListener(listener = (current, pre) {
       print('current: ${current.page}');
       print('current: ${pre.page}');
