@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
   void send() async {
     try {
       var result = await LoginDao.login(userName!, password!);
-      print(result);
+      // print(result);
       if (result['code'] == 0) {
         showToast('登录成功');
         HiNavigator.getInstance()?.onJumpTo(RouteStatus.home);

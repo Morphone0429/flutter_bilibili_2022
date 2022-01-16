@@ -26,12 +26,18 @@ class _BottomNavigatorState extends State<BottomNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    _pages = [HomePage(), RankingPage(), FavoritePage(), ProfilePage()];
+    _pages = [
+      HomePage(
+        onJumpTo: (index) => _onJumpTo(index, pageChange: false),
+      ),
+      RankingPage(),
+      FavoritePage(),
+      ProfilePage()
+    ];
 
     if (!_hasBuild) {
       // 通知HiNavigator 页面第一次打开时打开的是哪个tab
-      HiNavigator.getInstance()
-          ?.onBottomTabChange(initialPage, _pages![initialPage]);
+      HiNavigator.getInstance()?.onBottomTabChange(initialPage, _pages![initialPage]);
       _hasBuild = true;
     }
 
@@ -72,8 +78,6 @@ class _BottomNavigatorState extends State<BottomNavigator> {
 
   _bottomItem(String title, IconData icon, int index) {
     return BottomNavigationBarItem(
-        icon: Icon(icon, color: _defaultColor),
-        activeIcon: Icon(icon, color: _activeColor),
-        label: title);
+        icon: Icon(icon, color: _defaultColor), activeIcon: Icon(icon, color: _activeColor), label: title);
   }
 }
