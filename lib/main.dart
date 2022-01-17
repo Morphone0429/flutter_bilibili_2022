@@ -40,8 +40,6 @@ class _BiliAppState extends State<BiliApp> {
   // 使用navigator
   // _routeDelegate代理
   final BiliRouteDelegate _routeDelegate = BiliRouteDelegate();
-  // final BiliRouteInformationParser _routeInformationParser =
-  //     BiliRouteInformationParser();
 
   @override
   void initState() {
@@ -84,15 +82,17 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath> with ChangeNotifie
   final GlobalKey<NavigatorState> navigatorKey;
   BiliRouteDelegate() : navigatorKey = GlobalKey<NavigatorState>() {
     // 实现路由跳转逻辑 路由初始化时 注册逻辑
-    HiNavigator.getInstance()?.registerRouteJump(RouteJumpListener(
-      onJumpTo: (routeStatus, {args}) {
-        _routeStatus = routeStatus;
-        if (routeStatus == RouteStatus.detail) {
-          videoModel = args!['videoMo'];
-        }
-        notifyListeners();
-      },
-    ));
+    HiNavigator.getInstance()?.registerRouteJump(
+      RouteJumpListener(
+        onJumpTo: (routeStatus, {args}) {
+          _routeStatus = routeStatus;
+          if (routeStatus == RouteStatus.detail) {
+            videoModel = args!['videoMo'];
+          }
+          notifyListeners();
+        },
+      ),
+    );
   }
 
   RouteStatus _routeStatus = RouteStatus.home;
@@ -103,7 +103,6 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath> with ChangeNotifie
   // BiliRoutePath? path;
   @override
   Widget build(BuildContext context) {
-    // print('LoginDao.getBoardingPass()${LoginDao.getBoardingPass()}');
     var index = getPageIndex(pages, routeStatus); // 打开的页面是否在路由堆栈，存在的话在什么位置
     List<MaterialPage> tempPages = pages;
     if (index != -1) {
@@ -177,20 +176,6 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath> with ChangeNotifie
 
   @override
   Future<void> setNewRoutePath(BiliRoutePath configuration) async {}
-}
-
-// 将其解析为定义的数据类型
-class BiliRouteInformationParser extends RouteInformationParser<BiliRoutePath> {
-  @override
-  Future<BiliRoutePath> parseRouteInformation(RouteInformation routeInformation) async {
-    final uri = Uri.parse(routeInformation.location!); // 字符串转uri
-    // print('uri:$uri');
-    if (uri.pathSegments.isEmpty) {
-      // 长度为0  认为是首页
-      return BiliRoutePath.home();
-    }
-    return BiliRoutePath.detail();
-  }
 }
 
 // 定义路由数据  path

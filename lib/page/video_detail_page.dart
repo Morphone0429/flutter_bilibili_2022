@@ -14,6 +14,7 @@ import 'package:flutter_bilibili_lcq/widget/expandable_content.dart';
 import 'package:flutter_bilibili_lcq/widget/hi_tab.dart';
 import 'package:flutter_bilibili_lcq/widget/navigation_bar.dart';
 import 'package:flutter_bilibili_lcq/widget/video_header.dart';
+import 'package:flutter_bilibili_lcq/widget/video_large_card.dart';
 import 'package:flutter_bilibili_lcq/widget/video_toolbar.dart';
 import 'package:flutter_bilibili_lcq/widget/video_view.dart';
 
@@ -26,20 +27,19 @@ class VideoDetailPage extends StatefulWidget {
   _VideoDetailPageState createState() => _VideoDetailPageState();
 }
 
-class _VideoDetailPageState extends State<VideoDetailPage>
-    with TickerProviderStateMixin {
+class _VideoDetailPageState extends State<VideoDetailPage> with TickerProviderStateMixin {
   List tabs = ["简介", "评论288"];
   late TabController _controller;
   VideoDetailMo? videoDetailMo;
   VideoModel? videoModel; // 新的数据 实时的是数据
+  List<VideoModel> videoList = [];
 
   @override
   void initState() {
     super.initState();
 
     // 黑色状态栏 仅安卓
-    changeStatusBar(
-        color: Colors.black, statusStyle: StatusStyle.LIGHT_CONTENT);
+    changeStatusBar(color: Colors.black, statusStyle: StatusStyle.LIGHT_CONTENT);
 
     _controller = TabController(length: tabs.length, vsync: this);
 
@@ -139,7 +139,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
           onLike: _onLike,
           onUnLike: _onUnLike,
           onFavorite: _onFavorite,
-        )
+        ),
+        ...buildVideoList(),
       ],
     );
   }
@@ -150,10 +151,16 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     );
   }
 
+  List<Widget> buildVideoList() {
+    return videoList.map((VideoModel mo) {
+      return VideoLargeCard(videoModel: mo);
+    }).toList();
+  }
+
   _onLike() async {
     try {
       var result = await LikeDao.like(videoModel!.vid, !videoDetailMo!.isLike);
-      print(result);
+
       videoDetailMo!.isLike = !videoDetailMo!.isLike;
       if (videoDetailMo!.isLike) {
         videoModel!.like += 1;
@@ -177,8 +184,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
 
   _onFavorite() async {
     try {
-      var result = await FavoriteDao.favorite(
-          videoModel!.vid, !videoDetailMo!.isFavorite);
+      var result = await FavoriteDao.favorite(videoModel!.vid, !videoDetailMo!.isFavorite);
       videoDetailMo!.isFavorite = !videoDetailMo!.isFavorite;
       if (videoDetailMo!.isFavorite) {
         videoModel!.favorite += 1;
@@ -205,6 +211,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         videoDetailMo = result;
         // 更新旧数据
         videoModel = result.videoInfo;
+        videoList = result.videoList;
       });
 
       print('print::::::::::::-------->>>>>$result');

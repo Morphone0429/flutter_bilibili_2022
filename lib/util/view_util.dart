@@ -43,19 +43,13 @@ blackLinearGradient({bool fromTop = false}) {
 }
 
 void changeStatusBar(
-    {color = Colors.white,
-    StatusStyle statusStyle = StatusStyle.DARK_CONTENT,
-    BuildContext? context}) {
+    {color = Colors.white, StatusStyle statusStyle = StatusStyle.DARK_CONTENT, BuildContext? context}) {
   //沉浸式状态栏样式
   Brightness brightness;
   if (Platform.isIOS) {
-    brightness = statusStyle == StatusStyle.LIGHT_CONTENT
-        ? Brightness.dark
-        : Brightness.light;
+    brightness = statusStyle == StatusStyle.LIGHT_CONTENT ? Brightness.dark : Brightness.light;
   } else {
-    brightness = statusStyle == StatusStyle.LIGHT_CONTENT
-        ? Brightness.light
-        : Brightness.dark;
+    brightness = statusStyle == StatusStyle.LIGHT_CONTENT ? Brightness.light : Brightness.dark;
   }
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
     statusBarColor: Colors.transparent,
@@ -97,15 +91,14 @@ SizedBox hiSpace({double height = 1, double width = 1}) {
   return SizedBox(height: height, width: width);
 }
 
-
 // ///底部阴影
-// BoxDecoration? bottomBoxShadow() {
-//   return BoxDecoration(color: Colors.white, boxShadow: [
-//     BoxShadow(
-//         color: Colors.grey[100]!,
-//         offset: Offset(0, 5), //xy轴偏移
-//         blurRadius: 5.0, //阴影模糊程度
-//         spreadRadius: 1 //阴影扩散程度
-//     )
-//   ]);
-// }
+BoxDecoration? bottomBoxShadow() {
+  return BoxDecoration(color: Colors.white, boxShadow: [
+    BoxShadow(
+        color: Colors.grey[100]!,
+        offset: Offset(0, 5), //xy轴偏移
+        blurRadius: 5.0, //阴影模糊程度
+        spreadRadius: 1 //阴影扩散程度
+        )
+  ]);
+}

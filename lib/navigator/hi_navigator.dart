@@ -104,8 +104,7 @@ class HiNavigator extends _RouteJumpListener {
   void notify(List<MaterialPage> currentPages, List<MaterialPage> prePages) {
     if (currentPages == prePages) return;
     // current当前打开的页面   在栈的最顶部
-    var current =
-        RouteStatusInfo(getStatus(currentPages.last), currentPages.last.child);
+    var current = RouteStatusInfo(getStatus(currentPages.last), currentPages.last.child);
     _notify(current);
   }
 
