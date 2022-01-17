@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bilibili_lcq/page/ranking_tab_page.dart';
 import 'package:flutter_bilibili_lcq/util/view_util.dart';
 import 'package:flutter_bilibili_lcq/widget/hi_tab.dart';
 import 'package:flutter_bilibili_lcq/widget/navigation_bar.dart';
@@ -59,10 +60,11 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
   _buildTabView() {
     return Flexible(
         child: TabBarView(
-            controller: _controller,
-            children: TABS.map((tab) {
-              return Container();
-            }).toList()));
+      controller: _controller,
+      children: TABS.map((tab) {
+        return RankingTabPage(sort: tab['key'] as String);
+      }).toList(),
+    ));
   }
 
   @override
