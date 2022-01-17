@@ -4,8 +4,12 @@ import 'package:flutter_bilibili_lcq/http/core/hi_error.dart';
 import 'package:flutter_bilibili_lcq/http/dao/home_dao.dart';
 import 'package:flutter_bilibili_lcq/model/home_mo.dart';
 import 'package:flutter_bilibili_lcq/navigator/hi_navigator.dart';
+import 'package:flutter_bilibili_lcq/page/profile_page.dart';
+import 'package:flutter_bilibili_lcq/page/video_detail_page.dart';
 import 'package:flutter_bilibili_lcq/util/color.dart';
 import 'package:flutter_bilibili_lcq/util/toast.dart';
+import 'package:flutter_bilibili_lcq/util/view_util.dart';
+import 'package:flutter_bilibili_lcq/widget/hi_tab.dart';
 import 'package:flutter_bilibili_lcq/widget/loading_container.dart';
 import 'package:flutter_bilibili_lcq/widget/navigation_bar.dart';
 import 'package:underline_indicator/underline_indicator.dart';
@@ -21,7 +25,11 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+class _HomePageState extends HiState<HomePage>
+    with
+        AutomaticKeepAliveClientMixin,
+        TickerProviderStateMixin,
+        WidgetsBindingObserver {
   var listener;
 
   late TabController _controller;
@@ -32,7 +40,11 @@ class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixi
 
   @override
   void initState() {
-    _controller = TabController(length: categoryList.length, vsync: this); // TickerProviderStateMixin实现了vsync的功能 复用即可
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this); // app生命周期绑定
+    _controller = TabController(
+        length: categoryList.length,
+        vsync: this); // TickerProviderStateMixin实现了vsync的功能 复用即可
     HiNavigator.getInstance()?.addListener(listener = (current, pre) {
       // print('current: ${current.page}');
       // print('current: ${pre.page}');
@@ -43,16 +55,44 @@ class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixi
         // pre第一次打开可能会不存在
         // print('首页被压后台onPause');
       }
+
+      // 当页面返回到首页时  首页状态栏状态异常  需要重新设置
+      if (pre?.page is VideoDetailPage && current.page is! ProfilePage) {
+        var statusStyle = StatusStyle.DARK_CONTENT;
+        changeStatusBar(color: Colors.white, statusStyle: statusStyle);
+      }
     });
-    super.initState();
+
     loadData();
+  }
+
+  ///监听应用生命周期变化
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print(':didChangeAppLifecycleState:$state');
+    switch (state) {
+      case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
+        break;
+      case AppLifecycleState.resumed: //从后台切换前台，界面可见
+        //fix Android压后台首页状态栏字体颜色变白，详情页状态栏字体变黑问题
+        changeStatusBar();
+        break;
+      case AppLifecycleState.paused: // 界面不可见，后台
+        break;
+      case AppLifecycleState.detached: // APP结束时调用
+        break;
+    }
   }
 
   @override
   void dispose() {
     HiNavigator.getInstance()?.removeListener(listener);
-    super.dispose();
+
     _controller.dispose();
+
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -64,7 +104,7 @@ class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixi
         isLoading: _isLoading,
         child: Column(
           children: [
-            NavigationBar(
+            KNavigationBar(
               height: 50,
               child: _appBar(),
               color: Colors.white,
@@ -96,23 +136,15 @@ class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixi
   bool get wantKeepAlive => true;
 
   _tabBar() {
-    return TabBar(
-      tabs: categoryList.map<Tab>((tab) {
-        return Tab(
-          child: Padding(
-            padding: EdgeInsets.only(left: 5, right: 5),
-            child: Text(tab.name, style: TextStyle(fontSize: 16)),
-          ),
-        );
+    return HiTab(
+      categoryList.map<Tab>((tab) {
+        return Tab(text: tab.name);
       }).toList(),
-      isScrollable: true,
-      labelColor: Colors.black,
-      indicator: UnderlineIndicator(
-        strokeCap: StrokeCap.round,
-        borderSide: BorderSide(color: primary, width: 3),
-        insets: EdgeInsets.only(left: 15, right: 15),
-      ),
       controller: _controller,
+      fontSize: 16,
+      borderWidth: 3,
+      unselectedLabelColor: Colors.black54,
+      insets: 13,
     );
   }
 
@@ -170,7 +202,8 @@ class _HomePageState extends HiState<HomePage> with AutomaticKeepAliveClientMixi
       HomeMo result = await HomeDao.get('推荐');
       if (result.categoryList != null) {
         // tab长度变化后需要重新创建TabController
-        _controller = TabController(length: result.categoryList?.length ?? 0, vsync: this);
+        _controller = TabController(
+            length: result.categoryList?.length ?? 0, vsync: this);
       }
       setState(() {
         categoryList = result.categoryList ?? [];

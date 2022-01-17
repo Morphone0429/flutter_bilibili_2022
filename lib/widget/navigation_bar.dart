@@ -1,22 +1,18 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bilibili_lcq/util/view_util.dart';
 
-enum StatusStyle { LIGHT_CONTENT, DARK_CONTENT } // 暗黑 明亮
-
-class NavigationBar extends StatelessWidget {
+class KNavigationBar extends StatelessWidget {
   final StatusStyle statusStyle;
   final Color color;
   final double height;
-  final Widget child;
+  final Widget? child;
 
-  const NavigationBar(
+  const KNavigationBar(
       {Key? key,
       this.statusStyle = StatusStyle.DARK_CONTENT,
       this.color = Colors.white,
       this.height = 46,
-      required this.child})
+      this.child})
       : super(key: key);
 
   @override
@@ -35,21 +31,5 @@ class NavigationBar extends StatelessWidget {
 
   void _statusBarInit() {
     changeStatusBar();
-  }
-
-  void changeStatusBar(
-      {color: Colors.white, StatusStyle statusStyle: StatusStyle.DARK_CONTENT, BuildContext? context}) {
-    //沉浸式状态栏样式
-    var brightness;
-    if (Platform.isIOS) {
-      brightness = statusStyle == StatusStyle.LIGHT_CONTENT ? Brightness.dark : Brightness.light;
-    } else {
-      brightness = statusStyle == StatusStyle.LIGHT_CONTENT ? Brightness.light : Brightness.dark;
-    }
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.transparent,
-      statusBarBrightness: brightness,
-      statusBarIconBrightness: brightness,
-    ));
   }
 }

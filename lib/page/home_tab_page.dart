@@ -7,7 +7,7 @@ import 'package:flutter_bilibili_lcq/util/color.dart';
 import 'package:flutter_bilibili_lcq/util/toast.dart';
 import 'package:flutter_bilibili_lcq/widget/hi_banner.dart';
 import 'package:flutter_bilibili_lcq/widget/video_card.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+// import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class HomeTabPage extends StatefulWidget {
   final String? name;
@@ -18,7 +18,8 @@ class HomeTabPage extends StatefulWidget {
   _HomeTabPageState createState() => _HomeTabPageState();
 }
 
-class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClientMixin {
+class _HomeTabPageState extends State<HomeTabPage>
+    with AutomaticKeepAliveClientMixin {
   List<VideoModel> videoList = [];
   int pageIndex = 1;
   bool _loading = false;
@@ -30,7 +31,8 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
     // TODO: implement initState
     super.initState();
     _scrollController.addListener(() {
-      var dis = _scrollController.position.maxScrollExtent - _scrollController.position.pixels; // 滚动距离
+      var dis = _scrollController.position.maxScrollExtent -
+          _scrollController.position.pixels; // 滚动距离
       //当距离底部不足300时加载更多
       if (dis < 300 && !_loading) {
         print('------_loadData---');
@@ -62,7 +64,8 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
             if (widget.name == '推荐')
               SliverList(
                 delegate: SliverChildBuilderDelegate((content, index) {
-                  return Padding(padding: EdgeInsets.only(bottom: 8), child: _banner());
+                  return Padding(
+                      padding: EdgeInsets.only(bottom: 8), child: _banner());
                 }, childCount: 1),
               ),
 
@@ -93,7 +96,8 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
     var currentIndex = pageIndex + (loadMore ? 1 : 0); // 加载更多 就 +1 其他保持不变
     print('loading:currentIndex:$currentIndex');
     try {
-      HomeMo result = await HomeDao.get(widget.name!, pageIndex: currentIndex, pageSize: 10);
+      HomeMo result = await HomeDao.get(widget.name!,
+          pageIndex: currentIndex, pageSize: 10);
       setState(() {
         if (loadMore) {
           if (result.videoList.isNotEmpty) {
