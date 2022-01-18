@@ -16,14 +16,18 @@ class VideoView extends StatefulWidget {
   final bool looping; //是否循环播放
   final double aspectRadio; // 视频缩放比例  16：9
   final Widget? overlayUI; // 覆盖的UI
-  const VideoView(this.url,
-      {Key? key,
-      required this.cover,
-      this.autoPlay = false,
-      this.looping = false,
-      this.aspectRadio = 16 / 9,
-      this.overlayUI})
-      : super(key: key);
+  final Widget? barrageUI; // 弹幕UI
+
+  const VideoView(
+    this.url, {
+    Key? key,
+    required this.cover,
+    this.autoPlay = false,
+    this.looping = false,
+    this.aspectRadio = 16 / 9,
+    this.overlayUI,
+    this.barrageUI,
+  }) : super(key: key);
 
   @override
   _VideoViewState createState() => _VideoViewState();
@@ -49,7 +53,6 @@ class _VideoViewState extends State<VideoView> {
   @override
   void initState() {
     super.initState(); //父类先initState
-
     // 初始化播放器
     _videoPlayerController = VideoPlayerController.network(widget.url);
     _chewieController = ChewieController(
@@ -65,6 +68,7 @@ class _VideoViewState extends State<VideoView> {
         showBigPlayIcon: false, // 不显示中间播放按钮
         bottomGradient: blackLinearGradient(), // 底部渐变
         overlayUI: widget.overlayUI,
+        barrageUI: widget.barrageUI,
       ),
       materialProgressColors: _progressColors,
     );

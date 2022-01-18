@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bilibili_lcq/barrage/barrage_input.dart';
+import 'package:flutter_bilibili_lcq/barrage/barrage_switch.dart';
+import 'package:flutter_bilibili_lcq/barrage/hi_brrage.dart';
 import 'package:flutter_bilibili_lcq/http/core/hi_error.dart';
 import 'package:flutter_bilibili_lcq/http/dao/favorite_dao.dart';
 import 'package:flutter_bilibili_lcq/http/dao/like_dao.dart';
@@ -17,6 +20,7 @@ import 'package:flutter_bilibili_lcq/widget/video_header.dart';
 import 'package:flutter_bilibili_lcq/widget/video_large_card.dart';
 import 'package:flutter_bilibili_lcq/widget/video_toolbar.dart';
 import 'package:flutter_bilibili_lcq/widget/video_view.dart';
+import 'package:flutter_overlay/flutter_overlay.dart';
 
 class VideoDetailPage extends StatefulWidget {
   final VideoModel videoModel;
@@ -34,6 +38,9 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   VideoDetailMo? videoDetailMo;
   VideoModel? videoModel; // 新的数据 实时的是数据
   List<VideoModel> videoList = [];
+  bool _inoutShowing = false;
+  final _barrageKey =
+      GlobalKey<HiBarrageState>(); //设置弹幕key  可以通过_barrageKey.currentState调用内部方法
 
   @override
   void initState() {
@@ -46,6 +53,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     _controller = TabController(length: tabs.length, vsync: this);
 
     videoModel = widget.videoModel;
+
     _loadDetail();
   }
 
@@ -89,6 +97,11 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       model.url!,
       cover: model.cover,
       overlayUI: videoAppBar(),
+      barrageUI: HiBarrage(
+        vid: model.vid,
+        autoPlay: true,
+        key: _barrageKey,
+      ), // 弹幕ui
     );
   }
 
@@ -103,19 +116,37 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _tabBar(),
-            Padding(
-              padding: EdgeInsets.only(right: 20),
-              child: Icon(
-                Icons.live_tv_rounded,
-                color: Colors.grey,
-              ),
-            )
-          ],
+          children: [_tabBar(), _buildBarrageBtn()],
         ),
       ),
     );
+  }
+
+  _buildBarrageBtn() {
+    return BarrageSwitch(
+        inoutShowing: _inoutShowing,
+        onShowInput: () {
+          setState(() {
+            _inoutShowing = true;
+          });
+          HiOverlay.show(context, child: BarrageInput(
+            onTabClose: () {
+              setState(() {
+                _inoutShowing = false;
+              });
+            },
+          )).then((value) {
+            print('---input:$value');
+            _barrageKey.currentState!.send(value);
+          });
+        },
+        onBarrageSwitch: (open) {
+          if (open) {
+            _barrageKey.currentState!.play();
+          } else {
+            _barrageKey.currentState!.pause();
+          }
+        });
   }
 
   Widget _tabBar() {
@@ -227,6 +258,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   @override
   void dispose() {
     _controller.dispose();
+
     super.dispose();
   }
 }

@@ -13,11 +13,13 @@ class LoginDao {
     return _send(userName, password);
   }
 
-  static registration(String userName, String password, String imoocId, String orderId) {
+  static registration(
+      String userName, String password, String imoocId, String orderId) {
     return _send(userName, password, imoocId: imoocId, orderId: orderId);
   }
 
-  static _send(String userName, String password, {String? imoocId, String? orderId}) async {
+  static _send(String userName, String password,
+      {String? imoocId, String? orderId}) async {
     BaseRequest request;
     if (imoocId != null && orderId != null) {
       request = RegistrationRequest();
