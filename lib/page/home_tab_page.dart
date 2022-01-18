@@ -16,16 +16,17 @@ class HomeTabPage extends StatefulWidget {
   _HomeTabPageState createState() => _HomeTabPageState();
 }
 
-class _HomeTabPageState extends HiBaseTabState<HomeMo, VideoModel, HomeTabPage> {
+class _HomeTabPageState
+    extends HiBaseTabState<HomeMo, VideoModel, HomeTabPage> {
   @override
   void initState() {
     super.initState();
   }
 
   _banner() {
-    return Padding(
+    return HiBanner(
+      widget.bannerList!,
       padding: EdgeInsets.symmetric(horizontal: 5),
-      child: HiBanner(widget.bannerList!),
     );
   }
 
@@ -37,7 +38,8 @@ class _HomeTabPageState extends HiBaseTabState<HomeMo, VideoModel, HomeTabPage> 
           if (widget.name == '推荐')
             SliverList(
               delegate: SliverChildBuilderDelegate((content, index) {
-                return Padding(padding: EdgeInsets.only(bottom: 8), child: _banner());
+                return Padding(
+                    padding: EdgeInsets.only(bottom: 8), child: _banner());
               }, childCount: 1),
             ),
 
@@ -52,7 +54,8 @@ class _HomeTabPageState extends HiBaseTabState<HomeMo, VideoModel, HomeTabPage> 
 
   @override
   Future<HomeMo> getData(int pageIndex) async {
-    HomeMo result = await HomeDao.get(widget.name!, pageIndex: pageIndex, pageSize: 10);
+    HomeMo result =
+        await HomeDao.get(widget.name!, pageIndex: pageIndex, pageSize: 10);
     return result;
   }
 

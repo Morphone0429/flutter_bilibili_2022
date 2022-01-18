@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bilibili_lcq/http/dao/login_dao.dart';
 import 'package:flutter_bilibili_lcq/navigator/hi_navigator.dart';
 import 'package:flutter_bilibili_lcq/page/login_page.dart';
+import 'package:flutter_bilibili_lcq/page/notice_page.dart';
 import 'package:flutter_bilibili_lcq/page/registration_page.dart';
 import 'package:flutter_bilibili_lcq/page/video_detail_page.dart';
 import 'package:flutter_bilibili_lcq/util/color.dart';
@@ -76,7 +77,8 @@ class _BiliAppState extends State<BiliApp> {
 }
 
 // RouterDelegate代理
-class BiliRouteDelegate extends RouterDelegate<BiliRoutePath> with ChangeNotifier, PopNavigatorRouterDelegateMixin {
+class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin {
   // navigatorKey初始化  好处可以通过GlobalKey获取当前NavigatorState
   // 为Navigator设置一个key 必要的时候可以用过navigatorKey.currentState来获取NavigatorState对象
   final GlobalKey<NavigatorState> navigatorKey;
@@ -119,6 +121,8 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath> with ChangeNotifie
       page = pageWrap(VideoDetailPage(videoModel!));
     } else if (routeStatus == RouteStatus.registration) {
       page = pageWrap(RegistrationPage());
+    } else if (routeStatus == RouteStatus.notice) {
+      page = pageWrap(NoticePage());
     } else if (routeStatus == RouteStatus.login) {
       page = pageWrap(LoginPage());
     }
@@ -129,8 +133,8 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath> with ChangeNotifie
     pages = tempPages;
 
     return WillPopScope(
-      onWillPop: () async =>
-          !await navigatorKey.currentState!.maybePop(), //返回上一页调用的方法  获取全局navigatorKey  修复安卓物理返回键无法返回上一页的问题
+      onWillPop: () async => !await navigatorKey.currentState!
+          .maybePop(), //返回上一页调用的方法  获取全局navigatorKey  修复安卓物理返回键无法返回上一页的问题
       child: Navigator(
         key: navigatorKey,
         pages: pages,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bilibili_lcq/page/home_page.dart';
 import 'package:flutter_bilibili_lcq/page/login_page.dart';
+import 'package:flutter_bilibili_lcq/page/notice_page.dart';
 import 'package:flutter_bilibili_lcq/page/registration_page.dart';
 import 'package:flutter_bilibili_lcq/page/video_detail_page.dart';
 
@@ -26,7 +27,15 @@ int getPageIndex(List<MaterialPage> pages, RouteStatus routeStatus) {
 }
 
 // 自定义路由封装 路由状态
-enum RouteStatus { login, registration, home, detail, unknown }
+enum RouteStatus {
+  login,
+  registration,
+  home,
+  detail,
+  unknown,
+  notice,
+  darkMode
+}
 
 // 获取page对应的RouteStatus
 RouteStatus getStatus(MaterialPage page) {
@@ -38,6 +47,8 @@ RouteStatus getStatus(MaterialPage page) {
     return RouteStatus.home;
   } else if (page.child is VideoDetailPage) {
     return RouteStatus.detail;
+  } else if (page.child is NoticePage) {
+    return RouteStatus.notice;
   } else {
     return RouteStatus.unknown;
   }
@@ -104,7 +115,8 @@ class HiNavigator extends _RouteJumpListener {
   void notify(List<MaterialPage> currentPages, List<MaterialPage> prePages) {
     if (currentPages == prePages) return;
     // current当前打开的页面   在栈的最顶部
-    var current = RouteStatusInfo(getStatus(currentPages.last), currentPages.last.child);
+    var current =
+        RouteStatusInfo(getStatus(currentPages.last), currentPages.last.child);
     _notify(current);
   }
 
@@ -114,8 +126,8 @@ class HiNavigator extends _RouteJumpListener {
       // 当前打开的底部Bottomtab  打开的是首页，需要明确到首页具体哪一个tab
       current = _bottomTab!;
     }
-    print('hinavcurrent当前页面:${current.page}');
-    print('hinav_current上一次打开的页面:${_current?.page}');
+    // print('hinavcurrent当前页面:${current.page}');
+    // print('hinav_current上一次打开的页面:${_current?.page}');
     _listener.forEach((listener) {
       listener(current, _current!); // 告诉监听 这次打开的页面  和上一次打开的页面
     });

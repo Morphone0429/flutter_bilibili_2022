@@ -27,7 +27,8 @@ class VideoDetailPage extends StatefulWidget {
   _VideoDetailPageState createState() => _VideoDetailPageState();
 }
 
-class _VideoDetailPageState extends State<VideoDetailPage> with TickerProviderStateMixin {
+class _VideoDetailPageState extends State<VideoDetailPage>
+    with TickerProviderStateMixin {
   List tabs = ["简介", "评论288"];
   late TabController _controller;
   VideoDetailMo? videoDetailMo;
@@ -39,7 +40,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> with TickerProviderSt
     super.initState();
 
     // 黑色状态栏 仅安卓
-    changeStatusBar(color: Colors.black, statusStyle: StatusStyle.LIGHT_CONTENT);
+    changeStatusBar(
+        color: Colors.black, statusStyle: StatusStyle.LIGHT_CONTENT);
 
     _controller = TabController(length: tabs.length, vsync: this);
 
@@ -184,7 +186,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> with TickerProviderSt
 
   _onFavorite() async {
     try {
-      var result = await FavoriteDao.favorite(videoModel!.vid, !videoDetailMo!.isFavorite);
+      var result = await FavoriteDao.favorite(
+          videoModel!.vid, !videoDetailMo!.isFavorite);
       videoDetailMo!.isFavorite = !videoDetailMo!.isFavorite;
       if (videoDetailMo!.isFavorite) {
         videoModel!.favorite += 1;
@@ -213,8 +216,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> with TickerProviderSt
         videoModel = result.videoInfo;
         videoList = result.videoList;
       });
-
-      print('print::::::::::::-------->>>>>$result');
     } on NeedAuth catch (e) {
       print(e);
       showWarnToast(e.message);

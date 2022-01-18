@@ -9,7 +9,6 @@ class LikeDao {
     BaseRequest request = like ? LikeRequest() : CancelLikeRequest();
     request.pathParams = vid;
     var result = await HiNet.getInstance()?.fire(request);
-    print(result);
     return result;
   }
 }

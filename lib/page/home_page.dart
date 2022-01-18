@@ -24,7 +24,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends HiState<HomePage>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin, WidgetsBindingObserver {
+    with
+        AutomaticKeepAliveClientMixin,
+        TickerProviderStateMixin,
+        WidgetsBindingObserver {
   var listener;
 
   late TabController _controller;
@@ -37,7 +40,9 @@ class _HomePageState extends HiState<HomePage>
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this); // app生命周期绑定
-    _controller = TabController(length: categoryList.length, vsync: this); // TickerProviderStateMixin实现了vsync的功能 复用即可
+    _controller = TabController(
+        length: categoryList.length,
+        vsync: this); // TickerProviderStateMixin实现了vsync的功能 复用即可
     HiNavigator.getInstance()?.addListener(listener = (current, pre) {
       // print('current: ${current.page}');
       // print('current: ${pre.page}');
@@ -63,7 +68,7 @@ class _HomePageState extends HiState<HomePage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    print(':didChangeAppLifecycleState:$state');
+    // print(':didChangeAppLifecycleState:$state');
     switch (state) {
       case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
         break;
@@ -196,7 +201,8 @@ class _HomePageState extends HiState<HomePage>
       HomeMo result = await HomeDao.get('推荐');
       if (result.categoryList != null) {
         // tab长度变化后需要重新创建TabController
-        _controller = TabController(length: result.categoryList?.length ?? 0, vsync: this);
+        _controller = TabController(
+            length: result.categoryList?.length ?? 0, vsync: this);
       }
       setState(() {
         categoryList = result.categoryList ?? [];
