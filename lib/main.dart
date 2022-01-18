@@ -5,30 +5,30 @@ import 'package:flutter_bilibili_lcq/page/login_page.dart';
 import 'package:flutter_bilibili_lcq/page/notice_page.dart';
 import 'package:flutter_bilibili_lcq/page/registration_page.dart';
 import 'package:flutter_bilibili_lcq/page/video_detail_page.dart';
+import 'package:flutter_bilibili_lcq/provider/hi_provider.dart';
+import 'package:flutter_bilibili_lcq/provider/theme_provider.dart';
 import 'package:flutter_bilibili_lcq/util/color.dart';
 import 'package:flutter_bilibili_lcq/util/toast.dart';
+import 'package:provider/provider.dart';
 
 import 'db/hi_cache.dart';
 import 'model/video_model.dart';
 import 'navigator/bottom_navigator.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(BiliApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: white,
-      ),
-      home: BiliApp(),
-    );
-  }
-}
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       home: BiliApp(),
+//     );
+//   }
+// }
 
 class BiliApp extends StatefulWidget {
   const BiliApp({Key? key}) : super(key: key);
@@ -66,10 +66,15 @@ class _BiliAppState extends State<BiliApp> {
                   child: CircularProgressIndicator(),
                 ),
               );
-        return MaterialApp(
-          home: widget,
-          theme: ThemeData(primarySwatch: white),
-        );
+        return MultiProvider(
+            providers: topProviders,
+            child: Consumer<ThemeProvider>(builder: (BuildContext context, ThemeProvider themeProvider, Widget? child) {
+              return MaterialApp(
+                  home: widget,
+                  theme: themeProvider.getTheme(),
+                  darkTheme: themeProvider.getTheme(isDarkMode: true),
+                  themeMode: themeProvider.getThemeMode());
+            }));
       },
       future: HiCache.preInit(), // 缓存读取初始化
     );
@@ -77,8 +82,7 @@ class _BiliAppState extends State<BiliApp> {
 }
 
 // RouterDelegate代理
-class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin {
+class BiliRouteDelegate extends RouterDelegate<BiliRoutePath> with ChangeNotifier, PopNavigatorRouterDelegateMixin {
   // navigatorKey初始化  好处可以通过GlobalKey获取当前NavigatorState
   // 为Navigator设置一个key 必要的时候可以用过navigatorKey.currentState来获取NavigatorState对象
   final GlobalKey<NavigatorState> navigatorKey;
@@ -133,8 +137,8 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
     pages = tempPages;
 
     return WillPopScope(
-      onWillPop: () async => !await navigatorKey.currentState!
-          .maybePop(), //返回上一页调用的方法  获取全局navigatorKey  修复安卓物理返回键无法返回上一页的问题
+      onWillPop: () async =>
+          !await navigatorKey.currentState!.maybePop(), //返回上一页调用的方法  获取全局navigatorKey  修复安卓物理返回键无法返回上一页的问题
       child: Navigator(
         key: navigatorKey,
         pages: pages,

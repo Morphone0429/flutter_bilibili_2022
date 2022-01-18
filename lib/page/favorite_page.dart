@@ -16,8 +16,7 @@ class FavoritePage extends StatefulWidget {
   _FavoritePageState createState() => _FavoritePageState();
 }
 
-class _FavoritePageState
-    extends HiBaseTabState<RankingMo, VideoModel, FavoritePage> {
+class _FavoritePageState extends HiBaseTabState<RankingMo, VideoModel, FavoritePage> {
   late RouteChangeListener listener;
 
   @override
@@ -49,7 +48,7 @@ class _FavoritePageState
   _buildNavigationBar() {
     return KNavigationBar(
       child: Container(
-        decoration: bottomBoxShadow(),
+        decoration: bottomBoxShadow(context),
         alignment: Alignment.center,
         child: Text('收藏', style: TextStyle(fontSize: 16)),
       ),
@@ -72,8 +71,7 @@ class _FavoritePageState
 
   @override
   Future<RankingMo> getData(int pageIndex) async {
-    RankingMo result =
-        await FavoriteDao.favoriteList(pageIndex: 1, pageSize: 10);
+    RankingMo result = await FavoriteDao.favoriteList(pageIndex: 1, pageSize: 10);
     return result;
   }
 

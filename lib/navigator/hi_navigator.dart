@@ -27,15 +27,7 @@ int getPageIndex(List<MaterialPage> pages, RouteStatus routeStatus) {
 }
 
 // 自定义路由封装 路由状态
-enum RouteStatus {
-  login,
-  registration,
-  home,
-  detail,
-  unknown,
-  notice,
-  darkMode
-}
+enum RouteStatus { login, registration, home, detail, unknown, notice, darkMode }
 
 // 获取page对应的RouteStatus
 RouteStatus getStatus(MaterialPage page) {
@@ -80,6 +72,10 @@ class HiNavigator extends _RouteJumpListener {
     return _instance;
   }
 
+  RouteStatusInfo? getCurrent() {
+    return _current;
+  }
+
   // 首页底部tab切换监听 index切换的页面  page 打开的页面
   void onBottomTabChange(int index, Widget page) {
     _bottomTab = RouteStatusInfo(RouteStatus.home, page);
@@ -115,8 +111,7 @@ class HiNavigator extends _RouteJumpListener {
   void notify(List<MaterialPage> currentPages, List<MaterialPage> prePages) {
     if (currentPages == prePages) return;
     // current当前打开的页面   在栈的最顶部
-    var current =
-        RouteStatusInfo(getStatus(currentPages.last), currentPages.last.child);
+    var current = RouteStatusInfo(getStatus(currentPages.last), currentPages.last.child);
     _notify(current);
   }
 

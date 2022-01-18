@@ -37,7 +37,7 @@ class _RankingPageState extends State<RankingPage> with TickerProviderStateMixin
   _buildNavigationBar() {
     return KNavigationBar(
         child: Container(
-      decoration: bottomBoxShadow(),
+      decoration: bottomBoxShadow(context),
       alignment: Alignment.center,
       child: _tabBar(),
     ));

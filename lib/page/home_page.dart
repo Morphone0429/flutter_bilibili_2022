@@ -6,12 +6,13 @@ import 'package:flutter_bilibili_lcq/model/home_mo.dart';
 import 'package:flutter_bilibili_lcq/navigator/hi_navigator.dart';
 import 'package:flutter_bilibili_lcq/page/profile_page.dart';
 import 'package:flutter_bilibili_lcq/page/video_detail_page.dart';
+import 'package:flutter_bilibili_lcq/provider/theme_provider.dart';
 import 'package:flutter_bilibili_lcq/util/toast.dart';
 import 'package:flutter_bilibili_lcq/util/view_util.dart';
 import 'package:flutter_bilibili_lcq/widget/hi_tab.dart';
 import 'package:flutter_bilibili_lcq/widget/loading_container.dart';
 import 'package:flutter_bilibili_lcq/widget/navigation_bar.dart';
-
+import 'package:provider/provider.dart';
 import 'home_tab_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,10 +25,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends HiState<HomePage>
-    with
-        AutomaticKeepAliveClientMixin,
-        TickerProviderStateMixin,
-        WidgetsBindingObserver {
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin, WidgetsBindingObserver {
   var listener;
 
   late TabController _controller;
@@ -40,9 +38,7 @@ class _HomePageState extends HiState<HomePage>
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this); // app生命周期绑定
-    _controller = TabController(
-        length: categoryList.length,
-        vsync: this); // TickerProviderStateMixin实现了vsync的功能 复用即可
+    _controller = TabController(length: categoryList.length, vsync: this); // TickerProviderStateMixin实现了vsync的功能 复用即可
     HiNavigator.getInstance()?.addListener(listener = (current, pre) {
       // print('current: ${current.page}');
       // print('current: ${pre.page}');
@@ -83,6 +79,13 @@ class _HomePageState extends HiState<HomePage>
     }
   }
 
+  ///监听系统Dark Mode变化
+  @override
+  void didChangePlatformBrightness() {
+    context.read<ThemeProvider>().darModeChange();
+    super.didChangePlatformBrightness();
+  }
+
   @override
   void dispose() {
     HiNavigator.getInstance()?.removeListener(listener);
@@ -110,7 +113,7 @@ class _HomePageState extends HiState<HomePage>
             ),
             Container(
               // color: Colors.white,
-              decoration: bottomBoxShadow(),
+              decoration: bottomBoxShadow(context),
               child: _tabBar(),
             ),
             Flexible(
@@ -201,8 +204,7 @@ class _HomePageState extends HiState<HomePage>
       HomeMo result = await HomeDao.get('推荐');
       if (result.categoryList != null) {
         // tab长度变化后需要重新创建TabController
-        _controller = TabController(
-            length: result.categoryList?.length ?? 0, vsync: this);
+        _controller = TabController(length: result.categoryList?.length ?? 0, vsync: this);
       }
       setState(() {
         categoryList = result.categoryList ?? [];

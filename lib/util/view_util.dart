@@ -3,7 +3,12 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_bilibili_lcq/navigator/hi_navigator.dart';
+import 'package:flutter_bilibili_lcq/page/profile_page.dart';
+import 'package:flutter_bilibili_lcq/page/video_detail_page.dart';
+import 'package:flutter_bilibili_lcq/provider/theme_provider.dart';
+import 'package:provider/provider.dart';
+import 'color.dart';
 import 'format_util.dart';
 
 enum StatusStyle { LIGHT_CONTENT, DARK_CONTENT } // 暗黑 明亮
@@ -42,10 +47,25 @@ blackLinearGradient({bool fromTop = false}) {
       ]);
 }
 
-void changeStatusBar(
-    {color = Colors.white, StatusStyle statusStyle = StatusStyle.DARK_CONTENT, BuildContext? context}) {
+void changeStatusBar({color: Colors.white, StatusStyle statusStyle: StatusStyle.DARK_CONTENT, BuildContext? context}) {
+  if (context != null) {
+    //fix Tried to listen to a value exposed with provider, from outside of the widget tree.
+    var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    if (themeProvider.isDark()) {
+      statusStyle = StatusStyle.LIGHT_CONTENT;
+      color = HiColor.dark_bg;
+    }
+  }
+  var page = HiNavigator.getInstance()!.getCurrent()?.page;
+  //fix Android切换 profile页面状态栏变白问题
+  if (page is ProfilePage) {
+    color = Colors.transparent;
+  } else if (page is VideoDetailPage) {
+    color = Colors.black;
+    statusStyle = StatusStyle.LIGHT_CONTENT;
+  }
   //沉浸式状态栏样式
-  Brightness brightness;
+  var brightness;
   if (Platform.isIOS) {
     brightness = statusStyle == StatusStyle.LIGHT_CONTENT ? Brightness.dark : Brightness.light;
   } else {
@@ -92,7 +112,11 @@ SizedBox hiSpace({double height = 1, double width = 1}) {
 }
 
 // ///底部阴影
-BoxDecoration? bottomBoxShadow() {
+BoxDecoration? bottomBoxShadow(BuildContext context) {
+  var themeProvider = context.watch<ThemeProvider>();
+  if (themeProvider.isDark()) {
+    return null;
+  }
   return BoxDecoration(color: Colors.white, boxShadow: [
     BoxShadow(
         color: Colors.grey[100]!,
