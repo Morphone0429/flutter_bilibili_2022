@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bilibili_lcq/page/dark_mode_page.dart';
 import 'package:flutter_bilibili_lcq/page/home_page.dart';
 import 'package:flutter_bilibili_lcq/page/login_page.dart';
 import 'package:flutter_bilibili_lcq/page/notice_page.dart';
@@ -27,7 +28,15 @@ int getPageIndex(List<MaterialPage> pages, RouteStatus routeStatus) {
 }
 
 // 自定义路由封装 路由状态
-enum RouteStatus { login, registration, home, detail, unknown, notice, darkMode }
+enum RouteStatus {
+  login,
+  registration,
+  home,
+  detail,
+  unknown,
+  notice,
+  darkMode
+}
 
 // 获取page对应的RouteStatus
 RouteStatus getStatus(MaterialPage page) {
@@ -41,6 +50,8 @@ RouteStatus getStatus(MaterialPage page) {
     return RouteStatus.detail;
   } else if (page.child is NoticePage) {
     return RouteStatus.notice;
+  } else if (page.child is DarkModePage) {
+    return RouteStatus.darkMode;
   } else {
     return RouteStatus.unknown;
   }
@@ -111,7 +122,8 @@ class HiNavigator extends _RouteJumpListener {
   void notify(List<MaterialPage> currentPages, List<MaterialPage> prePages) {
     if (currentPages == prePages) return;
     // current当前打开的页面   在栈的最顶部
-    var current = RouteStatusInfo(getStatus(currentPages.last), currentPages.last.child);
+    var current =
+        RouteStatusInfo(getStatus(currentPages.last), currentPages.last.child);
     _notify(current);
   }
 

@@ -10,6 +10,8 @@ import 'package:flutter_bilibili_lcq/http/dao/like_dao.dart';
 import 'package:flutter_bilibili_lcq/http/dao/video_detail_dao.dart';
 import 'package:flutter_bilibili_lcq/model/video_detail_mo.dart';
 import 'package:flutter_bilibili_lcq/model/video_model.dart';
+import 'package:flutter_bilibili_lcq/provider/theme_provider.dart';
+import 'package:flutter_bilibili_lcq/util/color.dart';
 import 'package:flutter_bilibili_lcq/util/toast.dart';
 import 'package:flutter_bilibili_lcq/util/view_util.dart';
 import 'package:flutter_bilibili_lcq/widget/appbar.dart';
@@ -21,6 +23,7 @@ import 'package:flutter_bilibili_lcq/widget/video_large_card.dart';
 import 'package:flutter_bilibili_lcq/widget/video_toolbar.dart';
 import 'package:flutter_bilibili_lcq/widget/video_view.dart';
 import 'package:flutter_overlay/flutter_overlay.dart';
+import 'package:provider/provider.dart';
 
 class VideoDetailPage extends StatefulWidget {
   final VideoModel videoModel;
@@ -41,11 +44,11 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   bool _inoutShowing = false;
   final _barrageKey =
       GlobalKey<HiBarrageState>(); //设置弹幕key  可以通过_barrageKey.currentState调用内部方法
-
+  late ThemeProvider _themeProvider;
   @override
   void initState() {
     super.initState();
-
+    _themeProvider = context.read<ThemeProvider>();
     // 黑色状态栏 仅安卓
     changeStatusBar(
         color: Colors.black, statusStyle: StatusStyle.LIGHT_CONTENT);
@@ -108,12 +111,12 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   Widget _buildTabNavigation() {
     return Material(
       elevation: 5,
-      shadowColor: Colors.grey[100],
+      shadowColor: _themeProvider.isDark() ? HiColor.dark_bg : Colors.grey[100],
       child: Container(
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(left: 20),
         height: 39,
-        color: Colors.white,
+        color: _themeProvider.isDark() ? HiColor.dark_bg : Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [_tabBar(), _buildBarrageBtn()],

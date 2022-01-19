@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bilibili_lcq/model/video_model.dart';
+import 'package:flutter_bilibili_lcq/provider/theme_provider.dart';
 import 'package:flutter_bilibili_lcq/util/color.dart';
 import 'package:flutter_bilibili_lcq/util/format_util.dart';
+import 'package:provider/provider.dart';
 
 class VideoHeader extends StatelessWidget {
   final Owner owner;
@@ -37,7 +39,9 @@ class VideoHeader extends StatelessWidget {
                     Text('${countFormat(owner.fans)}粉丝',
                         style: TextStyle(
                             fontSize: 10,
-                            color: Colors.black45,
+                            color: context.read<ThemeProvider>().isDark()
+                                ? white
+                                : Colors.black45,
                             fontWeight: FontWeight.bold)),
                   ],
                 ),

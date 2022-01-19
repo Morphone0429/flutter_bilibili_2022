@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bilibili_lcq/model/video_model.dart';
 import 'package:flutter_bilibili_lcq/navigator/hi_navigator.dart';
+import 'package:flutter_bilibili_lcq/provider/theme_provider.dart';
 import 'package:flutter_bilibili_lcq/util/format_util.dart';
 import 'package:flutter_bilibili_lcq/util/view_util.dart';
+import 'package:provider/provider.dart';
 
 class VideoLargeCard extends StatelessWidget {
   final VideoModel videoModel;
@@ -11,9 +13,11 @@ class VideoLargeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var themeProvider = context.watch<ThemeProvider>();
     return GestureDetector(
       onTap: () {
-        HiNavigator.getInstance()?.onJumpTo(RouteStatus.detail, args: {'videoMo': videoModel});
+        HiNavigator.getInstance()
+            ?.onJumpTo(RouteStatus.detail, args: {'videoMo': videoModel});
       },
       child: Container(
         margin: EdgeInsets.only(left: 15, right: 15, bottom: 5),
@@ -23,7 +27,7 @@ class VideoLargeCard extends StatelessWidget {
         child: Row(
           children: [
             _itemImage(context),
-            _buildContent(),
+            _buildContent(themeProvider),
           ],
         ),
       ),
@@ -36,13 +40,16 @@ class VideoLargeCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(3),
       child: Stack(
         children: [
-          cachedImage(videoModel.cover, width: height * (16 / 9), height: height),
+          cachedImage(videoModel.cover,
+              width: height * (16 / 9), height: height),
           Positioned(
             bottom: 5,
             right: 5,
             child: Container(
                 padding: EdgeInsets.all(2),
-                decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(
+                    color: Colors.black38,
+                    borderRadius: BorderRadius.circular(2)),
                 child: Text(
                   durationTransform(videoModel.duration),
                   style: TextStyle(color: Colors.white, fontSize: 10),
@@ -53,7 +60,8 @@ class VideoLargeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(ThemeProvider themeProvider) {
+    var textColor = themeProvider.isDark() ? Colors.grey : Colors.black87;
     return Expanded(
       child: Container(
         padding: EdgeInsets.only(top: 5, left: 8, bottom: 5),
@@ -65,7 +73,7 @@ class VideoLargeCard extends StatelessWidget {
               videoModel.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 12, color: Colors.black87),
+              style: TextStyle(fontSize: 12, color: textColor),
             ),
             _buildBottomContent(),
           ],
@@ -106,7 +114,9 @@ class VideoLargeCard extends StatelessWidget {
       children: [
         Container(
           padding: EdgeInsets.all(1),
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(2)),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(2)),
           child: Text('UP', style: TextStyle(fontSize: 8, color: Colors.grey)),
         ),
         hiSpace(width: 8),
